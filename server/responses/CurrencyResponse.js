@@ -7,65 +7,46 @@ class CurrencyResponse {
     }
 
     getText(amount, from, to) {
-        const result = this.convert(amount, from, to);
+        // currying
+        const convert = this.convert(from, to);
+        const result = convert(amount);
 
         return `${amount} ${from} = ${result} ${to}`;
     }
 
-    convert(amount, from, to) {
+    convert(from, to) {
+        let multiply;
+
         if (from === 'dollar') {
             if (to === 'euro') {
-                return this.getDollarToEuro(amount);
+                multiply = this.multiply(0.86);
+            } else if (to === 'hryvnia') {
+                multiply = this.multiply(26.63);
+            }
+        } else if (from === 'euro') {
+            if (to === 'dollar') {
+                multiply = this.multiply(1.17);
             }
 
             if (to === 'hryvnia') {
-                return this.getDollarToHryvnia(amount);
+                multiply = this.multiply(31.05);
             }
-        }
-
-        if (from === 'euro') {
+        } else if (from === 'hryvnia') {
             if (to === 'dollar') {
-                return this.getEuroToDollar(amount);
-            }
-
-            if (to === 'hryvnia') {
-                return this.getEuroToHryvnia(amount);
-            }
-        }
-
-        if (from === 'hryvnia') {
-            if (to === 'dollar') {
-                return this.getHryvniaToDollar(amount);
+                multiply = this.multiply(0.038);
             }
 
             if (to === 'euro') {
-                return this.getHryvniaToEuro(amount);
+                multiply = this.multiply(0.032);
             }
         }
+
+        return (amount) => multiply(amount);
     }
 
-    getDollarToEuro(amount) {
-        return amount * 0.86;
-    }
-
-    getEuroToDollar(amount) {
-        return amount * 1.17;
-    }
-
-    getHryvniaToEuro(amount) {
-        return amount * 0.032;
-    }
-
-    getEuroToHryvnia(amount) {
-        return amount * 31.05;
-    }
-
-    getHryvniaToDollar(amount) {
-        return amount * 0.038;
-    }
-
-    getDollarToHryvnia(amount) {
-        return amount * 26.63;
+    //pure function
+    multiply(ratio) {
+        return amount => ratio * amount;
     }
 }
 
