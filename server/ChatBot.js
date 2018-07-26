@@ -1,27 +1,28 @@
 'use strict';
 
-const WeatherResponse = require('./responses/WeatherResponse');
-const CurrencyResponse = require('./responses/CurrencyResponse');
-const NoteResponse = require('./responses/NoteResponse');
-const QuoteResponse = require('./responses/QuoteResponse');
-const AdviseResponse = require('./responses/AdviseResponse');
-const DefaultResponse = require('./responses/DefaultResponse');
+const weatherResponseFactory = require('./factories/WeatherResponseFactory');
+const currencyResponseFactory = require('./factories/CurrencyResponseFactory');
+const noteResponseFactory = require('./factories/NoteResponseFactory');
+const quoteResponseFactory = require('./factories/QuoteResponseFactory');
+const adviseResponseFactory = require('./factories/AdviseResponseFactory');
+const defaultResponseFactory = require('./factories/DefaultResponseFactory');
 
 class ChatBot {
     constructor() {
         this.notes = [];
     }
 
+    // facade
     handleMessage(message) {
         const messageByWords = message.text.toLowerCase().split(' ');
         console.log(messageByWords);
 
         if (messageByWords[1]=== 'what' && messageByWords[2] === 'is' && messageByWords[3] === 'the' && messageByWords[4] === 'weather') {
-            return this.handleWeather(messageByWords);
+            return weatherResponseFactory(messageByWords);
         }
 
         if (messageByWords[1] === 'convert') {
-            return this.handleCurrency(messageByWords[2], messageByWords[3], messageByWords[5]);
+            return currencyResponseFactory(messageByWords[2], messageByWords[3], messageByWords[5]);
         }
 
         if (messageByWords[2] === 'note') {
@@ -29,7 +30,7 @@ class ChatBot {
         }
 
         if (messageByWords[1] === 'show' && messageByWords[2] === 'quote') {
-            return this.handleQuotes();
+            return quoteResponseFactory();
         }
 
         const wordBeforeLast = messageByWords[messageByWords.length - 2] || '';
@@ -39,22 +40,10 @@ class ChatBot {
             messageByWords.lastIndexOf('#@)₴?$0') === messageByWords.length - 1 &&
             wordBeforeLast.lastIndexOf('?') === wordBeforeLast.length - 1
         ) {
-            return this.handleAdvise();
+            return adviseResponseFactory();
         }
 
-        return new DefaultResponse();
-    }
-
-    handleWeather(messageByWords) {
-        if (messageByWords[5] === 'on') {
-            return new WeatherResponse(`${messageByWords[5]} ${messageByWords[6]}`, messageByWords[8]);
-        }
-
-        return new WeatherResponse(messageByWords[5], messageByWords[7]);
-    }
-
-    handleCurrency(amount, from, to) {
-        return new CurrencyResponse(amount, from, to);
+        return defaultResponseFactory();
     }
 
     handleNotes(messageByWords) {
@@ -65,11 +54,15 @@ class ChatBot {
                     body: messageByWords.join(' ').match(/body: (.*?) *$/)[1],
                 });
 
-                return new NoteResponse();
+                return noteResponseFactory();
 
             case 'show':
                 if (messageByWords[3] === 'list') {
-                    return new NoteResponse(JSON.stringify(this.notes));
+                    if (this.notes.length === 0) {
+                        return noteResponseFactory('No saved notes');
+                    }
+
+                    return noteResponseFactory(JSON.stringify(this.notes));
                 }
 
                 const note = this.notes.find((note) => {
@@ -77,33 +70,21 @@ class ChatBot {
                 });
 
                 if (!note) {
-                    return new NoteResponse('No notes with this title');
+                    return noteResponseFactory('No notes with this title');
                 }
 
-                return new NoteResponse(`title: "${note.title}" body: "${note.body}"`);
+                return noteResponseFactory(`title: "${note.title}" body: "${note.body}"`);
 
             case 'delete':
                 this.notes = this.notes.filter((note) => {
                     return note.title !== messageByWords[3];
                 });
 
-                return new NoteResponse();
+                return noteResponseFactory();
 
             default:
-                return new DefaultResponse();
+                return defaultResponseFactory();
         }
-    }
-
-    handleAdvise() {
-        return new AdviseResponse();
-    }
-
-    handleQuotes() {
-        return new QuoteResponse();
-    }
-
-    handleUnknown() {
-
     }
 }
 
