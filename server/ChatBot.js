@@ -1,11 +1,11 @@
 'use strict';
 
-const WeatherResponse = require('./WeatherResponse');
-const CurrencyResponse = require('./CurrencyResponse');
-const NoteResponse = require('./NoteResponse');
-const QuoteResponse = require('./QuoteResponse');
-const AdviseResponse = require('./AdviseResponse');
-const DefaultResponse = require('./DefaultResponse');
+const WeatherResponse = require('./responses/WeatherResponse');
+const CurrencyResponse = require('./responses/CurrencyResponse');
+const NoteResponse = require('./responses/NoteResponse');
+const QuoteResponse = require('./responses/QuoteResponse');
+const AdviseResponse = require('./responses/AdviseResponse');
+const DefaultResponse = require('./responses/DefaultResponse');
 
 class ChatBot {
     constructor() {
