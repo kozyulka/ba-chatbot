@@ -15,7 +15,6 @@ class ChatBot {
     // facade
     handleMessage(message) {
         const messageByWords = message.text.toLowerCase().split(' ');
-        console.log(messageByWords);
 
         if (messageByWords[1]=== 'what' && messageByWords[2] === 'is' && messageByWords[3] === 'the' && messageByWords[4] === 'weather') {
             return weatherResponseFactory(messageByWords);

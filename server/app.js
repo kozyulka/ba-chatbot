@@ -42,12 +42,20 @@ io.on('connection', (socket) => {
     io.emit('history', messages);
 
     socket.on('message', (message) => {
+        const messageProxy = new Proxy(message, {
+            get(target, prop) {
+                if (prop === 'isBot') {
+                    return target.text.indexOf('@bot') === 0;
+                }
+
+                return target[prop];
+            }
+        });
+
         chatManager.addMessage(message);
 
-        if (message.text.indexOf('@bot') === 0) {
+        if (messageProxy.isBot) {
             const response = chatBot.handleMessage(message);
-
-            console.log(response);
 
             chatManager.addMessage(response);
             socket.emit('message', response);
