@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="eng">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Socket.io</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:500,500i,700&amp;subset=cyrillic" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/reset.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/style.css" />
+
+</head>
+
+<body>
+    <main>
+        <div id="loginWindow" class="login-window">
+            <div class="login-window-item">
+                <div class=login-window-item-text>
+                    Enter your name:
+                </div>
+                <input id="userName" type="text" name="name">
+            </div>
+            <div class="login-window-item">
+                <div class=login-window-item-text>
+                    Enter your nickname:
+                </div>
+                <input id="userNickname" type="text" name="nickname">
+            </div>
+            <button class="login-window-button" onclick="login()">Login</button>
+        </div>
+
+        <div id="chatWrapper" class="chat-wrapper">
+            <div class="chat">
+                <div class="chat-users-wrapper">
+                    <div class="chat-users-header">Users</div>
+                    <div id="users" class="chat-users"></div>
+                </div>
+                <div class="chat-messages-wrapper">
+                    <div class="chat-messages-header">SUPER CHAT</div>
+                    <div id="chatMessages" class="chat-messages"></div>
+                </div>
+            </div>
+            <div class="chat-send-message">
+                <div class="chat-send-message-text">
+                    <textarea id="myMessage" rows="4"></textarea>
+                </div>
+                <button id="sendMessageButton" class="chat-send-message-button" onclick="sendMessage()">Send</button>
+            </div>
+            <div class="typing-users-wrapper">
+                <div id="typingUsers" class="typing-users">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="node_modules/moment/min/moment.min.js"></script>
+    <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="index.js"></script>
+
+</body>
+
+</html>
