@@ -4,17 +4,8 @@ const WeatherResponse = require('./WeatherResponse');
 const CurrencyResponse = require('./CurrencyResponse');
 const NotesResponse = require('./NotesResponse');
 const QuoteResponse = require('./QuoteResponse');
+const AdviseResponse = require('./AdviseResponse');
 const DefaultResponse = require('./DefaultResponse');
-
-const advise = [
-    'Delete the negative; accentuate the positive!',
-    'Trust your instincts',
-    'Be patient and persistent',
-    'Relax, take it easy',
-    'Drink more water',
-    'Double cheeseburger menu',
-    'Do what is right, not what is easy'
-];
 
 class ChatBot {
     constructor() {
@@ -48,8 +39,7 @@ class ChatBot {
             messageByWords.lastIndexOf('#@)₴?$0') === messageByWords.length - 1 &&
             wordBeforeLast.lastIndexOf('?') === wordBeforeLast.length - 1
         ) {
-            console.log('advise');
-            return;
+            return this.handleAdvise();
         }
 
         return new DefaultResponse();
@@ -105,7 +95,7 @@ class ChatBot {
     }
 
     handleAdvise() {
-
+        return new AdviseResponse();
     }
 
     handleQuotes() {
