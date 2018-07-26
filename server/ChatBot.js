@@ -2,6 +2,9 @@
 
 const WeatherResponse = require('./WeatherResponse');
 const CurrencyResponse = require('./CurrencyResponse');
+const NotesResponse = require('./NotesResponse');
+const QuoteResponse = require('./QuoteResponse');
+const DefaultResponse = require('./DefaultResponse');
 
 const advise = [
     'Delete the negative; accentuate the positive!',
@@ -13,65 +16,29 @@ const advise = [
     'Do what is right, not what is easy'
 ];
 
-const quotes= [
-    {
-        text: 'Change your life today. Don\'t gamble on the future, act now, without delay.',
-        author: 'Simone de Beauvoir'
-    },
-    {
-        text: 'Only I can change my life. No one can do it for me',
-        author: 'Carol Burnett'
-    },
-    {
-        text: 'Life is 10% what happens to you and 90% how you react to it.',
-        author: 'Charles R. Swindoll'
-    },
-    {
-        text: 'The most effective way to do it, is to do it.',
-        author: 'Amelia Earhart'
-    },
-    {
-        text: 'A goal is a dream with a deadline.',
-        author: 'Napoleon Hill'
-    },
-    {
-        text: 'Every day brings new choices.',
-        author: ' Martha Beck'
-    },
-    {
-        text: 'Adopt the pace of nature: her secret is patience.',
-        author: 'Ralph Waldo Emerson'
-    },
-];
-
 class ChatBot {
+    constructor() {
+        this.notes = [];
+    }
+
     handleMessage(message) {
         const messageByWords = message.text.toLowerCase().split(' ');
         console.log(messageByWords);
 
         if (messageByWords[1]=== 'what' && messageByWords[2] === 'is' && messageByWords[3] === 'the' && messageByWords[4] === 'weather') {
-            if (messageByWords[5] === 'on') {
-                return this.handleWeather(`${messageByWords[5]} ${messageByWords[6]}`, messageByWords[8]);
-            }
-
-            console.log('weather');
-            return this.handleWeather(messageByWords[5], messageByWords[7]);
+            return this.handleWeather(messageByWords);
         }
 
         if (messageByWords[1] === 'convert') {
-            console.log('currency');
-
             return this.handleCurrency(messageByWords[2], messageByWords[3], messageByWords[5]);
         }
 
         if (messageByWords[2] === 'note') {
-            console.log('notes');
-            return;
+            return this.handleNotes(messageByWords);
         }
 
         if (messageByWords[1] === 'show' && messageByWords[2] === 'quote') {
-            console.log('quotes');
-            return;
+            return this.handleQuotes();
         }
 
         const wordBeforeLast = messageByWords[messageByWords.length - 2] || '';
@@ -85,19 +52,56 @@ class ChatBot {
             return;
         }
 
-        console.log('I dont understand :(');
+        return new DefaultResponse();
     }
 
-    handleWeather(day, city) {
-        return new WeatherResponse(day, city);
+    handleWeather(messageByWords) {
+        if (messageByWords[5] === 'on') {
+            return new WeatherResponse(`${messageByWords[5]} ${messageByWords[6]}`, messageByWords[8]);
+        }
+
+        return new WeatherResponse(messageByWords[5], messageByWords[7]);
     }
 
     handleCurrency(amount, from, to) {
         return new CurrencyResponse(amount, from, to);
     }
 
-    handleNotes() {
+    handleNotes(messageByWords) {
+        switch (messageByWords[1]) {
+            case 'save':
+                this.notes.push({
+                    title: messageByWords.join(' ').match(/title: (.*?), body/)[1],
+                    body: messageByWords.join(' ').match(/body: (.*?) *$/)[1],
+                });
 
+                return new NotesResponse();
+
+            case 'show':
+                if (messageByWords[3] === 'list') {
+                    return new NotesResponse(JSON.stringify(this.notes));
+                }
+
+                const note = this.notes.find((note) => {
+                    return note.title = messageByWords[3];
+                });
+
+                if (!note) {
+                    return new NotesResponse('No notes with this title');
+                }
+
+                return new NotesResponse(`title: "${note.title}" body: "${note.body}"`);
+
+            case 'delete':
+                this.notes = this.notes.filter((note) => {
+                    return note.title !== messageByWords[3];
+                });
+
+                return new NotesResponse();
+
+            default:
+                return new DefaultResponse();
+        }
     }
 
     handleAdvise() {
@@ -105,7 +109,7 @@ class ChatBot {
     }
 
     handleQuotes() {
-
+        return new QuoteResponse();
     }
 
     handleUnknown() {

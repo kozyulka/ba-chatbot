@@ -47,6 +47,8 @@ io.on('connection', (socket) => {
         if (message.text.indexOf('@bot') === 0) {
             const response = chatBot.handleMessage(message);
 
+            console.log(response);
+
             chatManager.addMessage(response);
             socket.emit('message', response);
         } else {
