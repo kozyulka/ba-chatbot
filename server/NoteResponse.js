@@ -1,10 +1,10 @@
 'use strict';
 
-class NotesResponse {
+class NoteResponse {
     constructor(text) {
         this.sender = 'bot';
         this.text = text || 'Done!';
     }
 }
 
-module.exports = NotesResponse;
+module.exports = NoteResponse;

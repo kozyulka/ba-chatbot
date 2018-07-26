@@ -2,7 +2,7 @@
 
 const WeatherResponse = require('./WeatherResponse');
 const CurrencyResponse = require('./CurrencyResponse');
-const NotesResponse = require('./NotesResponse');
+const NoteResponse = require('./NoteResponse');
 const QuoteResponse = require('./QuoteResponse');
 const AdviseResponse = require('./AdviseResponse');
 const DefaultResponse = require('./DefaultResponse');
@@ -65,11 +65,11 @@ class ChatBot {
                     body: messageByWords.join(' ').match(/body: (.*?) *$/)[1],
                 });
 
-                return new NotesResponse();
+                return new NoteResponse();
 
             case 'show':
                 if (messageByWords[3] === 'list') {
-                    return new NotesResponse(JSON.stringify(this.notes));
+                    return new NoteResponse(JSON.stringify(this.notes));
                 }
 
                 const note = this.notes.find((note) => {
@@ -77,17 +77,17 @@ class ChatBot {
                 });
 
                 if (!note) {
-                    return new NotesResponse('No notes with this title');
+                    return new NoteResponse('No notes with this title');
                 }
 
-                return new NotesResponse(`title: "${note.title}" body: "${note.body}"`);
+                return new NoteResponse(`title: "${note.title}" body: "${note.body}"`);
 
             case 'delete':
                 this.notes = this.notes.filter((note) => {
                     return note.title !== messageByWords[3];
                 });
 
-                return new NotesResponse();
+                return new NoteResponse();
 
             default:
                 return new DefaultResponse();
